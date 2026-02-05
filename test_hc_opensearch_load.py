@@ -41,6 +41,8 @@ loader = LoaderFactory.get_loader(
         "mappings": {}
     }
 )
+print("TYPE:", type(transformed_records))
+print("DATA:", list(transformed_records))
 
 # 5️ Load data
 loader(transformed_records)
