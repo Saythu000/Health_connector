@@ -1,0 +1,7 @@
+{
+  "aliases": {
+    "healthconnect-events-write": {
+      "is_write_index": true
+    }
+  }
+}

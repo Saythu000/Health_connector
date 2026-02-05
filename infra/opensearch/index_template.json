@@ -1,0 +1,36 @@
+{
+  "index_patterns": ["healthconnect-events-*"],
+  "template": {
+    "settings": {
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "plugins.index_state_management.policy_id": "healthconnect-retention"
+      }
+    },
+    "mappings": {
+      "properties": {
+        "event_time": { "type": "date" },
+        "end_time": { "type": "date" },
+
+        "user_id": { "type": "keyword" },
+        "device_id": { "type": "keyword" },
+        "activity_id": { "type": "keyword" },
+        "activity_type": { "type": "keyword" },
+
+        "duration_seconds": { "type": "integer" },
+        "steps": { "type": "integer" },
+        "distance_meters": { "type": "float" },
+        "calories_kcal": { "type": "float" },
+
+        "avg_hr_bpm": { "type": "integer" },
+        "max_hr_bpm": { "type": "integer" },
+        "elevation_gain_m": { "type": "float" },
+        "active_zone_minutes": { "type": "integer" },
+
+        "source": { "type": "keyword" }
+      }
+    }
+  },
+  "priority": 100
+}
