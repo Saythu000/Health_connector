@@ -1,7 +1,7 @@
 from src.custom.connectors.opensearch import OpensearchConnector
 from src.custom.loaders.factory import LoaderFactory
 
-# 1️⃣ Sample transformed record (THIS is what loader expects)
+# 1️ Sample transformed record (THIS is what loader expects)
 transformed_records = [
     {
         "_index": "healthconnect-events",
@@ -20,7 +20,7 @@ transformed_records = [
     }
 ]
 
-# 2️⃣ OpenSearch credentials (local)
+# 2️ OpenSearch credentials (local)
 opensearch_creds = {
     "schema_type": "http",
     "host": "localhost",
@@ -28,10 +28,10 @@ opensearch_creds = {
     "verify_certs": False
 }
 
-# 3️⃣ Connect to OpenSearch
+# 3️ Connect to OpenSearch
 client = OpensearchConnector(opensearch_creds)()
 
-# 4️⃣ Create loader
+# 4️ Create loader
 loader = LoaderFactory.get_loader(
     "opensearch",
     connection=client,
@@ -42,7 +42,7 @@ loader = LoaderFactory.get_loader(
     }
 )
 
-# 5️⃣ Load data
+# 5️ Load data
 loader(transformed_records)
 
 print("✅ HealthConnect data indexed successfully")
