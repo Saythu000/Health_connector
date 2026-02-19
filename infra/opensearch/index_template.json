@@ -9,7 +9,9 @@
       }
     },
     "mappings": {
+      "dynamic": "strict",
       "properties": {
+        "@timestamp": {"type": "date"},
         "event_time": { "type": "date" },
         "end_time": { "type": "date" },
 

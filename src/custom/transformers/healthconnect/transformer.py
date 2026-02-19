@@ -25,7 +25,18 @@ class HealthConnectTransformer(BaseTransformer):
             try:
                 event = HealthEventDocument(**raw)
                 
-                yield self.transform(event.model_dump())
+                record = event.model_dump(mode="json")
+                
+                # required for time-series & ISM
+                record["@timestamp"] = record["event_time"]
+                
+                doc_id = f"{record['user_id']}|{record['activity_id']}|{record['event_time']}"
+                
+                yield {"_index": self.index_name,
+                       "_id": doc_id,
+                       "_source": record}
+                
+                #yield self.transform(record)
                 
             except Exception as e:
                 logger.error(f"HealthConnect transform failed: {e}")

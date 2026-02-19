@@ -29,7 +29,7 @@ sample_events = [
 # Transformer config
 # -----------------------------
 config = {
-    "index_name": "healthconnect-events"
+    "index_name": "healthconnect-events-write"
 }
 
 # -----------------------------

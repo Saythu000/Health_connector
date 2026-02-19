@@ -4,23 +4,31 @@ from typing import Dict, Any, Iterator
 from .base import BaseExtractor
 from .schemas.healthconnector import HealthConnectPayload
 
+from src.custom.queue.redis_client import RedisQueue
+#Talk to redis , Push events into queue
+
 logger = logging.getLogger(__name__)
 
 class HealthConnectExtractor(BaseExtractor):
     """
     Purpose:
-       Converts HealthConnectPayload into flat,
-       time-series-ready activity records.
+       Converts HealthConnectPayload into flat activity records
+       and push them into Redis queue.
     """
     
-    def __init__(self, payload: Dict[str, Any]):
+    def __init__(self, payload: Dict[str, Any], redis_queue: RedisQueue):
         """
-        Args:
+        Args: extractor needs two things:
             payload (dict): Raw Health Connect JSON payload
+            redis_queue (RedisQueue): Redis queue instance
         """
         
-        #Validate once at the boundary
+        #Validate input data payload ONCE , Preveent garbage entering Redis
         self.payload = HealthConnectPayload(**payload)
+        
+        #save redis queue reference , extractor can push data later
+        self.redis_queue = redis_queue
+        
         
         logger.info(
             "HealthConnectorExtractor initialized | user=%s activities=%d",
@@ -29,13 +37,16 @@ class HealthConnectExtractor(BaseExtractor):
         )
         
     
-    def __call__(self) -> Iterator[Dict[str, Any]]:
-        return self.extract()
+    def __call__(self) -> None:
+        """
+        Entry point - extract and push events into Redis
+        """
+        self.extract()
     
     
-    def extract(self) -> Iterator[Dict[str, Any]]:
+    def extract(self) -> None:
         """ 
-        Yields one record per activity (time-series event)
+        Flatten activities and push them into Redis queue
         """
         
         user_id = self.payload.user.get("user_id")
@@ -72,6 +83,14 @@ class HealthConnectExtractor(BaseExtractor):
                     
                 })
                 
-            yield record
+            #PUSH to Redis
+            self.redis_queue.push(record)
+            #Extracotr -> Redis Queue
+            
+            logger.debug(
+                "Event pushed to Redis | user=%s activity=%s",
+                user_id,
+                activity.activity_id,
+            )
 
        
